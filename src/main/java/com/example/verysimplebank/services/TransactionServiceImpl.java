@@ -1,17 +1,13 @@
 package com.example.verysimplebank.services;
 
-import com.example.verysimplebank.dto.TransactionDTO;
-import com.example.verysimplebank.dto.TransactionToShowDTO;
-import com.example.verysimplebank.model.Account;
-import com.example.verysimplebank.model.CustomUser;
-import com.example.verysimplebank.model.Transaction;
+import com.example.verysimplebank.dto.TransactionToDisplayDTO;
+import com.example.verysimplebank.model.*;
 import com.example.verysimplebank.repos.TransactionRepository;
 import com.example.verysimplebank.services.converter.CurrencyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,15 +50,16 @@ public class TransactionServiceImpl implements TransactionService{
 
 
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("y MM dd h:mm");
-        String finalDate = sdf.format(date);
-        Transaction transaction = new Transaction(finalDate, value, convertedCurrency);
+        Transaction transaction = new Transaction(date, sender.getCurrency(), TransactionType.PERFORMED, value);
+        Transaction transaction1 = new Transaction(date, sender.getCurrency(), TransactionType.RECEIVED, value);
+        //transaction.setAccount(sender);
+        transaction.setRelatedAccountNumber(receiverNumber);
+        //transaction1.setAccount(receiver);
+        transaction1.setRelatedAccountNumber(performerNumber);
 
-        CustomUser user = userService.findByLogin(sender.getCustomUser().getLogin());
-        user.addTransaction(transaction);
-        userService.addUser(user);
+        sender.setTransaction(transaction);
+        receiver.setTransaction(transaction1);
 
-        receiver.setReceivedTransaction(transaction);
         accountService.addAccount(sender);
         accountService.addAccount(receiver);
     }
@@ -70,12 +67,17 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<TransactionToShowDTO> getAllByUser(String login){
-        List<TransactionToShowDTO> dtos = new ArrayList<>();
+    public List<TransactionToDisplayDTO> getAllByUser(String login){
+        List<TransactionToDisplayDTO> dtos = new ArrayList<>();
         List<Transaction> transactions = transactionRepository.getTransactionDTO(login);
         for (Transaction t : transactions) {
-            TransactionToShowDTO dto = new TransactionToShowDTO(t.getDate(), t.getValue(), t.getRecipient().getAccountNumber(), t.getSender().getLogin(), t.getCurrency());
-            dtos.add(dto);
+            if (t.getType() == TransactionType.PERFORMED) {
+                TransactionToDisplayDTO dto = new TransactionToDisplayDTO(t.getDate().toString(), t.getValue(), t.getAccount().getAccountNumber(), t.getRelatedAccountNumber(), t.getCurrency(), t.getType());
+                dtos.add(dto);
+            } else {
+                TransactionToDisplayDTO dto = new TransactionToDisplayDTO(t.getDate().toString(), t.getValue(), t.getRelatedAccountNumber(), t.getAccount().getAccountNumber(), t.getCurrency(), t.getType());
+                dtos.add(dto);
+            }
         }
         return  dtos;
     }

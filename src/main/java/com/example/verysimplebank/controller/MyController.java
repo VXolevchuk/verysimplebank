@@ -69,7 +69,7 @@ public class MyController {
     }
 
     @GetMapping("transactions")
-    public List<TransactionToShowDTO> getTransactions() {
+    public List<TransactionToDisplayDTO> getTransactions() {
         User user = getCurrentUser();
         String login = user.getUsername();
         return transactionService.getAllByUser(login);

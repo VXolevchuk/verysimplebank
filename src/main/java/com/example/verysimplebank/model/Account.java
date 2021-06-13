@@ -1,14 +1,17 @@
 package com.example.verysimplebank.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "Accounts")
-@Data @NoArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString(exclude = {"customUser", "transactions"})
 public class Account {
     @Id
     @GeneratedValue
@@ -27,8 +30,8 @@ public class Account {
     @JoinColumn(name = "customuser_id")
     private CustomUser customUser;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "recipient")
-    private List<Transaction> receivedTransactions;
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "account")
+    private List<Transaction> transactions;
 
 
     public Account(Long accountNumber, double money, String dateOfCreation, boolean isBlocked) {
@@ -44,9 +47,9 @@ public class Account {
         this.currency = currency;
     }
 
-    public void setReceivedTransaction(Transaction transaction) {
-        transaction.setRecipient(this);
-        this.receivedTransactions.add(transaction);
+    public void setTransaction(Transaction transaction) {
+        transaction.setAccount(this);
+        this.transactions.add(transaction);
     }
 
     public void addMoney(double money) {

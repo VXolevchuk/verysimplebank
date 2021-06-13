@@ -134,11 +134,12 @@ function loadData2() {
                             $('<input>').attr('type', 'checkbox').attr('value', data[i].id)
                         )
                     )
-                    .append($('<td>').append(data[i].date))
-                    .append($('<td>').append(data[i].senderLogin))
+                    .append($('<td>').append(data[i].date1))
+                    .append($('<td>').append(data[i].senderCardNumber))
                     .append($('<td>').append(data[i].receiverCardNumber))
-                    .append($('<td>').append(data[i].value))
+                    .append($('<td>').append(data[i].value1))
                     .append($('<td>').append(data[i].currency))
+                    .append($('<td>').append(data[i].type1))
             );
         }
     });

@@ -28,8 +28,6 @@ public class CustomUser {
     @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL)
     private List<Account> accounts = new ArrayList<Account>();
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<Transaction> transactions = new ArrayList<Transaction>();
 
     public CustomUser(String login, String password, String email, UserRole role, boolean isBlocked) {
         this.login = login;
@@ -49,10 +47,5 @@ public class CustomUser {
     public void addAccount(Account account) {
         account.setCustomUser(this);
         this.accounts.add(account);
-    }
-
-    public void addTransaction(Transaction transaction) {
-        transaction.setSender(this);
-        this.transactions.add(transaction);
     }
 }
