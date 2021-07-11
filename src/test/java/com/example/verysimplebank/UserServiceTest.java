@@ -46,8 +46,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findCustomUserByLogin(login);
 
-        CustomUser savedUser = userService.findByLogin(login).orElseThrow(() ->
-                new UsernameNotFoundException("User doesn't exists"));
+        CustomUser savedUser = userService.findByLogin(login);
         Assert.assertEquals(login, savedUser.getLogin());
         Assert.assertEquals(UserRole.USER, savedUser.getRole());
         Assert.assertFalse(savedUser.isBlocked());
