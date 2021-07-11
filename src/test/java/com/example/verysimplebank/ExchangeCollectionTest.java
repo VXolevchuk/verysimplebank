@@ -42,19 +42,7 @@ public class ExchangeCollectionTest {
         String ADDRESS = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
         List<ExchangeRateDTO> rates = exchangeCollector.collectExchange(ADDRESS);
         Assert.assertEquals(3, rates.size());
-
-        /*ExchangeRateDTO rateDTO = rates.get(0);
-        ExchangeRate rate = ExchangeRate.fromDTO(rateDTO);
-
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("y MM dd");
-        String dateOfRate = sdf.format(date);
-        rate.setDate(dateOfRate);
-        exchangeService.addExchange(rate);
-
-        Mockito.verify(exchangeRepository, Mockito.times(1)).save(rate);*/
-
-
+        
         for (ExchangeRateDTO rateDTO : rates) {
             ExchangeRate rate = ExchangeRate.fromDTO(rateDTO);
 
