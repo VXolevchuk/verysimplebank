@@ -12,4 +12,5 @@ public interface AccountService {
 
     Account getAccountByNumber(Long accountNumber);
     Long countAccounts();
+    boolean existByNumber(long number);
 }

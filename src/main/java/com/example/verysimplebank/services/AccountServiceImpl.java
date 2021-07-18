@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService{
         List<AccountDTO> dtos = new ArrayList<>();
         List<Account> accounts = accountRepository.findAccountsByCustomUser_Login(userLogin);
         for (Account account : accounts) {
-            dtos.add(new AccountDTO(account.getAccountNumber(), account.getMoney(), account.getCurrency().toString()));
+            dtos.add(new AccountDTO(account.getAccountNumber(), account.getAmount(), account.getCurrency().toString()));
         }
         return dtos;
     }
@@ -46,7 +46,10 @@ public class AccountServiceImpl implements AccountService{
         return accountRepository.countAccountsByAccountNumberIsNotNull();
     }
 
-
-
+    @Transactional(readOnly = true)
+    @Override
+    public boolean existByNumber(long number) {
+        return accountRepository.existsByAccountNumber(number);
+    }
 
 }

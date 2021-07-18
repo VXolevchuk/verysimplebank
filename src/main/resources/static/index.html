@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Google Authentication sample</title>
+    <title>Very simple bank</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
@@ -23,11 +23,14 @@
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#addModal">Send money</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#createModal">Create Account</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
             </li>
         </ul>
         <span class="navbar-text">
-                <div id="login">...</div>
+                <div id="">...</div>
             </span>
     </div>
 </nav>
@@ -119,6 +122,49 @@
                     </tr>
                     <tr>
                         <td><span id="messageSpan"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="createModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Perform transaction</h4>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" id="number" placeholder="Enter account number" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span id="numberSpan"></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" id="currency" placeholder="Enter currency" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span id="currencySpan"></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="button" id="submitButton1" value="Add" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span id="messageSpan1"></span></td>
                     </tr>
                     </tbody>
                 </table>

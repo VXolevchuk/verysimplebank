@@ -16,32 +16,43 @@ public class CurrencyConverter {
 
     public double convertCurrency(String converted, String base, double value) {
         double returnedValue = 0;
-        double ratio;
         if (converted.equals(uah) || base.equals(uah)) {
+            double ratio;
             if (converted.equals(uah)) {
-                ratio = getRatioToUAH(base);
+                ratio = getBuyRatioToUAH(base);
                 returnedValue = value/ratio;
             }
             if (base.equals(uah)) {
-                ratio = getRatioToUAH(converted);
+                ratio = getSaleRatioToUAH(converted);
                 returnedValue = value*ratio;
             }
         } else {
-            double ratioForUSD = getRatioToUAH(usd);
-            double ratioForEUR = getRatioToUAH(eur);
-            ratio = ratioForEUR/ratioForUSD;
+            double buyRatioForUSD = getBuyRatioToUAH(usd);
+            double saleRatioForUSD = getSaleRatioToUAH(usd);
+
+            double buyRatioForEUR = getBuyRatioToUAH(eur);
+            double saleRatioForEUR = getSaleRatioToUAH(eur);
+
+            double saleRatio = saleRatioForEUR/saleRatioForUSD;
+            double buyRatio = buyRatioForEUR/buyRatioForUSD;
+
             if (converted.equals(usd)) {
-                returnedValue = value/ratio;
+                returnedValue = value/buyRatio;
             }
             if (converted.equals(eur)) {
-                returnedValue = value*ratio;
+                returnedValue = value*saleRatio;
             }
         }
         return returnedValue;
     }
 
-    private double getRatioToUAH(String currency) {
+    private double getBuyRatioToUAH(String currency) {
         ExchangeRate exchangeRate = exchangeService.getLastByCcy(currency);
-        return (exchangeRate.getBuy() + exchangeRate.getSale())/2;
+        return exchangeRate.getBuy();
+    }
+
+    private double getSaleRatioToUAH(String currency) {
+        ExchangeRate exchangeRate = exchangeService.getLastByCcy(currency);
+        return  exchangeRate.getSale();
     }
 }

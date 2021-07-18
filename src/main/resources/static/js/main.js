@@ -61,6 +61,50 @@ function assignButtons() {
         }
     });
 
+    $("#submitButton1").click(function (e) {
+        if ($("#number").val() == "")
+            $("#numberSpan").text("Enter account number");
+        else
+            $("#numberSpan").text("");
+
+        if ($("#currency").val() == "")
+            $("#currencySpan").text("Enter currency");
+        else
+            $("#currencySpan").text("");
+
+        if (($("#number").val() != "") && ($("#currency").val() != "")) {
+            var account = {
+                accountNumber: $("#number").val(),
+                currency: $("#currency").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/createAccount",
+                contentType: "application/json",
+                data: JSON.stringify(account),
+                dataType: "json",
+                success: function (result, status, xhr) {
+                    if (result.description == "OK") {
+                        $("#messageSpan1").text("Created successfully");
+                        setTimeout(function () {
+                            window.location = "/";
+                        }, 2000);
+                    } else {
+                        $("#messageSpan1").text("Error occured!");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    var jsonError = jQuery.parseJSON( xhr.responseText );
+                    var desc = (jsonError != "") ? jsonError.description : "no details";
+
+                    $("#messageSpan1").text("Result: " + status + " " + error + " " +
+                        xhr.status + " " + xhr.statusText + ": " + desc);
+                }
+            });
+        }
+    });
+
     $('#deleteButton').click(function() {
         var idList = { 'toDelete' : []};
 
@@ -72,6 +116,7 @@ function assignButtons() {
             window.location = "/";
         });
     });
+
 }
 
 

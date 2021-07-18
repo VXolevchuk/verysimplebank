@@ -1,11 +1,11 @@
 package com.example.verysimplebank.controller;
 
 import com.example.verysimplebank.dto.*;
-import com.example.verysimplebank.dto.result.BadRequestResult;
-import com.example.verysimplebank.dto.result.ResultDTO;
-import com.example.verysimplebank.dto.result.SuccessResult;
+import com.example.verysimplebank.dto.result.*;
 import com.example.verysimplebank.model.Account;
+import com.example.verysimplebank.model.Currency;
 import com.example.verysimplebank.model.CustomUser;
+import com.example.verysimplebank.security.TokenHandler;
 import com.example.verysimplebank.services.AccountService;
 import com.example.verysimplebank.services.ExchangeService;
 import com.example.verysimplebank.services.TransactionService;
@@ -24,25 +24,32 @@ import java.util.List;
 
 @RestController
 public class MyController {
+    @Autowired
+    private  TokenHandler handler;
     private final UserService userService;
     private final AccountService accountService;
     private final TransactionService transactionService;
-    @Autowired
-    private ExchangeService exchangeService;
+    private final ExchangeService exchangeService;
 
-    public MyController(UserService userService, AccountService accountService, TransactionService transactionService) {
+    public MyController(UserService userService, AccountService accountService, TransactionService transactionService, ExchangeService exchangeService) {
         this.userService = userService;
         this.accountService = accountService;
         this.transactionService = transactionService;
+        this.exchangeService = exchangeService;
     }
 
     @GetMapping("/mainPage")
     public CustomUserDTO user() {
         User user = getCurrentUser();
         String login = user.getUsername();
-        CustomUserDTO userDTO = new CustomUserDTO(login);
-        return userDTO;
+        return new CustomUserDTO(login);
     }
+
+    @GetMapping("token")
+    public String  getToken() {
+        return null;
+    }
+
 
     @GetMapping("accounts")
     public List<AccountDTO> accounts() {
@@ -73,6 +80,29 @@ public class MyController {
         User user = getCurrentUser();
         String login = user.getUsername();
         return transactionService.getAllByUser(login);
+    }
+
+    @PostMapping("createAccount")
+    public ResponseEntity<ResultDTO> createAccount(@RequestBody AccountDTO accountDTO) {
+        try {
+            Currency currency = Currency.valueOf(accountDTO.getCurrency());
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new UnsupportedCurrencyResult(), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = getCurrentUser();
+        String login = user.getUsername();
+        CustomUser customUser = userService.findByLogin(login);
+
+        if (!accountService.existByNumber(accountDTO.getAccountNumber())) {
+            Account account = new Account(accountDTO.getAccountNumber(), Currency.valueOf(accountDTO.getCurrency()));
+            account.setCustomUser(customUser);
+            accountService.addAccount(account);
+
+            return new ResponseEntity<>(new SuccessResult(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new UnsuitableAccountNumberResult(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

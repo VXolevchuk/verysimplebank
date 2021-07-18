@@ -35,16 +35,16 @@ public class TransactionServiceImpl implements TransactionService{
         Account receiver = accountService.getAccountByNumber(receiverNumber);
         String convertedCurrency = sender.getCurrency().toString();
         String baseCurrency = receiver.getCurrency().toString();
-        double senderMoney = sender.getMoney();
-        double receiverMoney = receiver.getMoney();
+        double senderMoney = sender.getAmount();
+        double receiverMoney = receiver.getAmount();
         if (senderMoney >= value) {
             if (convertedCurrency.equals(baseCurrency)) {
-                receiver.setMoney(receiverMoney + value);
-                sender.setMoney(senderMoney - value);
+                receiver.setAmount(receiverMoney + value);
+                sender.setAmount(senderMoney - value);
             } else {
-                double convertedValue = converter.getRatio(convertedCurrency, baseCurrency, value);
-                receiver.setMoney(receiverMoney + convertedValue);
-                sender.setMoney(senderMoney - value);
+                double convertedValue = converter.convertCurrency(convertedCurrency, baseCurrency, value);
+                receiver.setAmount(receiverMoney + convertedValue);
+                sender.setAmount(senderMoney - value);
             }
         }
 
@@ -52,9 +52,7 @@ public class TransactionServiceImpl implements TransactionService{
         Date date = new Date();
         Transaction transaction = new Transaction(date, sender.getCurrency(), TransactionType.PERFORMED, value);
         Transaction transaction1 = new Transaction(date, sender.getCurrency(), TransactionType.RECEIVED, value);
-        //transaction.setAccount(sender);
         transaction.setRelatedAccountNumber(receiverNumber);
-        //transaction1.setAccount(receiver);
         transaction1.setRelatedAccountNumber(performerNumber);
 
         sender.setTransaction(transaction);

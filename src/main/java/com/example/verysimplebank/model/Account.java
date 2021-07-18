@@ -19,14 +19,15 @@ public class Account {
 
     private Long accountNumber;
 
-    private double money;
+    private double amount;
+
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
     private String dateOfCreation;
     private boolean isBlocked;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "customuser_id")
     private CustomUser customUser;
 
@@ -34,16 +35,21 @@ public class Account {
     private List<Transaction> transactions;
 
 
-    public Account(Long accountNumber, double money, String dateOfCreation, boolean isBlocked) {
+    public Account(Long accountNumber, double amount, String dateOfCreation, boolean isBlocked) {
         this.accountNumber = accountNumber;
-        this.money = money;
+        this.amount = amount;
         this.dateOfCreation = dateOfCreation;
         this.isBlocked = isBlocked;
     }
 
-    public Account(Long accountNumber, double money, Currency currency) {
+    public Account(Long accountNumber, double amount, Currency currency) {
         this.accountNumber = accountNumber;
-        this.money = money;
+        this.amount = amount;
+        this.currency = currency;
+    }
+
+    public Account(Long accountNumber, Currency currency) {
+        this.accountNumber = accountNumber;
         this.currency = currency;
     }
 
@@ -52,7 +58,4 @@ public class Account {
         this.transactions.add(transaction);
     }
 
-    public void addMoney(double money) {
-        this.money += money;
-    }
 }
